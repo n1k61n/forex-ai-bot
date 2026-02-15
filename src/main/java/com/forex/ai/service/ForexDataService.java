@@ -9,9 +9,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 /**
- * Forex Data Xidməti
- * Real proyektdə buraya JForex API və ya data feed qoşulur
- * Test üçün simulyasiya məlumatları yaradır
+ * Forex Data Service
+ * In a real project, a JForex API or data feed would be connected here.
+ * Generates simulated data for testing.
  */
 @Slf4j
 @Service
@@ -20,19 +20,19 @@ public class ForexDataService {
     private final Random random = new Random();
 
     /**
-     * EUR/USD üçün test data yarat (simulyasiya)
-     * Real proyektdə bu metod JForex API-dan məlumat alır
+     * Generate test data for a given pair (simulation)
+     * In a real project, this method would get data from the JForex API.
      */
     public ForexData generateSimulatedData(String pair) {
-        log.debug("📊 {} üçün simulyasiya data yaradılır...", pair);
+        log.debug("📊 Generating simulated data for {}...", pair);
 
-        // Baza qiymət (EUR/USD üçün)
+        // Base price (for the given pair)
         double basePrice = getBasePrice(pair);
 
-        // Təsadüfi RSI yarat (25-75 arası, real bazara uyğun)
+        // Generate random RSI (between 25-75, similar to the real market)
         double rsi = 25 + random.nextDouble() * 50;
 
-        // Qiymət dəyişikliyi simulyasiyası
+        // Price change simulation
         double priceVariation = (random.nextDouble() - 0.5) * 0.0100;
         double close = basePrice + priceVariation;
         double open = close - (random.nextDouble() - 0.5) * 0.0020;
@@ -40,11 +40,11 @@ public class ForexDataService {
         double low = Math.min(open, close) - random.nextDouble() * 0.0015;
         double volume = 8000 + random.nextDouble() * 20000;
 
-        // EMA hesabla (sadələşdirilmiş)
+        // Calculate EMA (simplified)
         double emaFast = close + (random.nextDouble() - 0.5) * 0.0010;
         double emaSlow = close + (random.nextDouble() - 0.5) * 0.0020;
 
-        // MACD hesabla
+        // Calculate MACD
         double macd = emaFast - emaSlow;
         double macdSignal = macd + (random.nextDouble() - 0.5) * 0.0005;
 
@@ -77,7 +77,7 @@ public class ForexDataService {
     }
 
     /**
-     * Aşırıalış (Overbought) senaryosu - SELL siqnalı gözlənilir
+     * Overbought scenario - SELL signal expected
      */
     public ForexData generateOverboughtData(String pair) {
         double basePrice = getBasePrice(pair);
@@ -88,7 +88,7 @@ public class ForexDataService {
                 .low(basePrice + 0.0060)
                 .close(basePrice + 0.0090)
                 .volume(12000)
-                .rsi(76.5)           // Çox yüksək RSI → SELL
+                .rsi(76.5)           // Very high RSI → SELL
                 .macd(0.0030)
                 .macdSignal(0.0022)
                 .emaFast(basePrice + 0.0088)
@@ -102,7 +102,7 @@ public class ForexDataService {
     }
 
     /**
-     * Həddənaşırısatış (Oversold) senaryosu - BUY siqnalı gözlənilir
+     * Oversold scenario - BUY signal expected
      */
     public ForexData generateOversoldData(String pair) {
         double basePrice = getBasePrice(pair);
@@ -113,7 +113,7 @@ public class ForexDataService {
                 .low(basePrice - 0.0100)
                 .close(basePrice - 0.0090)
                 .volume(18000)
-                .rsi(28.3)           // Çox aşağı RSI → BUY
+                .rsi(28.3)           // Very low RSI → BUY
                 .macd(-0.0020)
                 .macdSignal(-0.0015)
                 .emaFast(basePrice - 0.0088)
@@ -127,7 +127,7 @@ public class ForexDataService {
     }
 
     /**
-     * Neytral senaryo - HOLD siqnalı gözlənilir
+     * Neutral scenario - HOLD signal expected
      */
     public ForexData generateNeutralData(String pair) {
         double basePrice = getBasePrice(pair);
@@ -138,7 +138,7 @@ public class ForexDataService {
                 .low(basePrice - 0.0008)
                 .close(basePrice + 0.0002)
                 .volume(9000)
-                .rsi(51.2)           // Neytral RSI → HOLD
+                .rsi(51.2)           // Neutral RSI → HOLD
                 .macd(0.0001)
                 .macdSignal(0.0001)
                 .emaFast(basePrice + 0.0002)
@@ -152,7 +152,7 @@ public class ForexDataService {
     }
 
     /**
-     * Valyuta cütü üçün baza qiymət
+     * Base price for the currency pair
      */
     private double getBasePrice(String pair) {
         return switch (pair.toUpperCase()) {

@@ -5,8 +5,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * CORS konfiqurasyonu
- * GUI-nin API-a çağırış edə bilməsi üçün
+ * CORS Configuration
+ * To allow the GUI to make calls to the API
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

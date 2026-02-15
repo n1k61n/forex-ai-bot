@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * AI Proqnoz Nəticəsi
+ * AI Prediction Result
  */
 @Data
 @Builder
@@ -14,25 +14,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PredictionResult {
 
-    // Siqnal: BUY, SELL, HOLD
+    // Signal: BUY, SELL, HOLD
     private String signal;
 
-    // Ehtimallar (%)
+    // Probabilities (%)
     private double buyProbability;
     private double sellProbability;
     private double holdProbability;
 
-    // Əminlik səviyyəsi (%)
+    // Confidence level (%)
     private double confidence;
 
-    // Trade etmək tövsiyəsi
+    // Recommendation to trade
     private boolean shouldTrade;
 
-    // Əlavə məlumat
+    // Additional information
     private String reason;
     private String pair;
     private String timestamp;
 
-    // Risk səviyyəsi
+    // Risk level
     private String riskLevel; // LOW, MEDIUM, HIGH
 }

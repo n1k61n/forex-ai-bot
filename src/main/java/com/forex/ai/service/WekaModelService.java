@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Weka ML Xidməti
- * Modeli öyrədir, saxlayır və proqnoz verir
+ * Weka ML Service
+ * Trains, saves, and provides predictions from the model.
  */
 @Slf4j
 @Service
@@ -29,36 +29,36 @@ public class WekaModelService {
     private Instances dataStructure;
 
     private static final String MODEL_PATH = "models/forex_model.model";
-    private static final double MIN_CONFIDENCE = 0.65; // 65% minimum əminlik
+    private static final double MIN_CONFIDENCE = 0.65; // 65% minimum confidence
 
     /**
-     * Uygulama başlayanda modeli hazırla
+     * Prepare the model when the application starts.
      */
     @PostConstruct
     public void initialize() {
-        log.info("🤖 Weka AI Modeli başladılır...");
+        log.info("🤖 Initializing Weka AI Model...");
 
-        // Data strukturunu yarat
+        // Create the data structure
         dataStructure = createDataStructure();
 
-        // Model faylı varsa yüklə, yoxsa öyrət
+        // Load the model file if it exists, otherwise train a new one
         File modelFile = new File(MODEL_PATH);
         if (modelFile.exists()) {
             loadModel();
         } else {
-            log.info("📊 Model tapılmadı, yeni model öyrədilir...");
+            log.info("📊 Model not found, training a new model...");
             trainWithSampleData();
         }
     }
 
     /**
-     * ARFF data strukturunu yarat
-     * (Feature-ləri təyin edir)
+     * Create the ARFF data structure.
+     * (Defines the features)
      */
     private Instances createDataStructure() {
         ArrayList<Attribute> attributes = new ArrayList<>();
 
-        // Texniki indikatorlar
+        // Technical indicators
         attributes.add(new Attribute("rsi"));
         attributes.add(new Attribute("macd"));
         attributes.add(new Attribute("macd_signal"));
@@ -69,7 +69,7 @@ public class WekaModelService {
         attributes.add(new Attribute("atr"));
         attributes.add(new Attribute("volume"));
 
-        // Class (hədəf dəyişən)
+        // Class (target variable)
         ArrayList<String> classValues = new ArrayList<>();
         classValues.add("BUY");
         classValues.add("SELL");
@@ -83,19 +83,19 @@ public class WekaModelService {
     }
 
     /**
-     * Nümunə data ilə model öyrət
-     * (Real proyektdə buraya tarixi data gəlir)
+     * Train the model with sample data.
+     * (In a real project, historical data would be used here)
      */
     public void trainWithSampleData() {
-        log.info("📈 Nümunə data ilə model öyrədilir...");
+        log.info("📈 Training model with sample data...");
 
         Instances trainingData = new Instances(dataStructure);
 
-        // Nümunə training data yarat
-        // Real proyektdə bunlar tarixi Forex datalarından gəlir
+        // Create sample training data
+        // In a real project, this would come from historical Forex data
         double[][] samples = {
             // rsi,    macd,    sig,    emaF,    emaS,    bbU,     bbL,    atr,   vol,  signal
-            // BUY nümunələri (RSI aşağı, qiymət artacaq)
+            // BUY samples (RSI low, price expected to rise)
             {30.5,  -0.0020, -0.0015, 1.0820, 1.0835, 1.0900, 1.0750, 0.0025, 15000},
             {28.3,  -0.0018, -0.0012, 1.0815, 1.0830, 1.0895, 1.0745, 0.0022, 18000},
             {25.7,  -0.0025, -0.0020, 1.0810, 1.0828, 1.0890, 1.0740, 0.0028, 20000},
@@ -105,7 +105,7 @@ public class WekaModelService {
             {26.9,  -0.0022, -0.0017, 1.0812, 1.0826, 1.0892, 1.0742, 0.0026, 19000},
             {31.5,  -0.0012, -0.0009, 1.0822, 1.0836, 1.0902, 1.0752, 0.0021, 15500},
 
-            // SELL nümunələri (RSI yüksək, qiymət düşəcək)
+            // SELL samples (RSI high, price expected to fall)
             {72.5,   0.0025,  0.0018, 1.0920, 1.0905, 1.0990, 1.0850, 0.0028, 14000},
             {75.3,   0.0030,  0.0022, 1.0935, 1.0915, 1.1005, 1.0865, 0.0030, 12000},
             {78.9,   0.0035,  0.0028, 1.0950, 1.0925, 1.1020, 1.0880, 0.0033, 11000},
@@ -115,7 +115,7 @@ public class WekaModelService {
             {71.6,   0.0022,  0.0017, 1.0915, 1.0902, 1.0985, 1.0845, 0.0026, 15000},
             {74.9,   0.0029,  0.0023, 1.0930, 1.0912, 1.1000, 1.0860, 0.0030, 13000},
 
-            // HOLD nümunələri (Neytral zona)
+            // HOLD samples (Neutral zone)
             {50.2,   0.0002,  0.0001, 1.0870, 1.0868, 1.0940, 1.0800, 0.0015,  9000},
             {52.8,  -0.0003,  0.0002, 1.0872, 1.0870, 1.0942, 1.0802, 0.0016,  8500},
             {48.5,   0.0005, -0.0003, 1.0868, 1.0866, 1.0938, 1.0798, 0.0014,  9500},
@@ -132,7 +132,7 @@ public class WekaModelService {
             "HOLD","HOLD","HOLD","HOLD","HOLD","HOLD","HOLD","HOLD"
         };
 
-        // Instance-ləri əlavə et
+        // Add instances
         for (int i = 0; i < samples.length; i++) {
             double[] vals = new double[10];
             System.arraycopy(samples[i], 0, vals, 0, 9);
@@ -143,7 +143,7 @@ public class WekaModelService {
             trainingData.add(instance);
         }
 
-        // Random Forest modeli öyrət
+        // Train a Random Forest model
         try {
             RandomForest rf = new RandomForest();
             rf.setNumIterations(100);
@@ -153,47 +153,47 @@ public class WekaModelService {
             rf.buildClassifier(trainingData);
             this.model = rf;
 
-            // Model dəqiqliyini yoxla
+            // Evaluate model accuracy
             evaluateModel(rf, trainingData);
 
-            // Modeli saxla
+            // Save the model
             saveModel(rf);
 
-            log.info("✅ Model uğurla öyrədildi!");
+            log.info("✅ Model trained successfully!");
 
         } catch (Exception e) {
-            log.error("❌ Model öyrədilməsi zamanı xəta: {}", e.getMessage());
+            log.error("❌ Error during model training: {}", e.getMessage());
         }
     }
 
     /**
-     * Model dəqiqliyini qiymətləndir
+     * Evaluate model accuracy.
      */
     private void evaluateModel(Classifier clf, Instances data) {
         try {
             Evaluation eval = new Evaluation(data);
             eval.crossValidateModel(clf, data, 5, new Random(42));
 
-            log.info("📊 === Model Qiymətləndirməsi ===");
-            log.info("✅ Dəqiqlik: {}", String.format("%.2f%%", eval.pctCorrect()));
+            log.info("📊 === Model Evaluation ===");
+            log.info("✅ Accuracy: {}", String.format("%.2f%%", eval.pctCorrect()));
             log.info("📈 Kappa: {}", String.format("%.4f", eval.kappa()));
 
         } catch (Exception e) {
-            log.warn("Model qiymətləndirilməsi zamanı xəta: {}", e.getMessage());
+            log.warn("Error during model evaluation: {}", e.getMessage());
         }
     }
 
     /**
-     * Proqnoz ver — əsas metod
+     * Make a prediction — the main method.
      */
     public PredictionResult predict(ForexData data) {
         if (model == null) {
-            log.error("Model yüklənməyib!");
+            log.error("Model not loaded!");
             return buildErrorResult(data.getPair());
         }
 
         try {
-            // Instance yarat
+            // Create an instance
             double[] vals = new double[10];
             vals[0] = data.getRsi();
             vals[1] = data.getMacd();
@@ -204,29 +204,29 @@ public class WekaModelService {
             vals[6] = data.getBbLower();
             vals[7] = data.getAtr();
             vals[8] = data.getVolume();
-            vals[9] = Utils.missingValue(); // signal bilinmir
+            vals[9] = Utils.missingValue(); // signal is unknown
 
             Instance instance = new DenseInstance(1.0, vals);
             instance.setDataset(dataStructure);
 
-            // Proqnoz al
+            // Get prediction
             double predicted = model.classifyInstance(instance);
             double[] probs = model.distributionForInstance(instance);
 
             String signal = dataStructure.classAttribute().value((int) predicted);
             double confidence = probs[(int) predicted] * 100;
 
-            // Risk səviyyəsini müəyyən et
+            // Determine the risk level
             String riskLevel = calculateRiskLevel(data);
 
-            // Trade etmək lazımdırmı?
+            // Should we trade?
             boolean shouldTrade = confidence >= (MIN_CONFIDENCE * 100)
                     && !signal.equals("HOLD")
                     && !riskLevel.equals("HIGH");
 
             String reason = buildReason(signal, data, confidence);
 
-            log.info("🔮 Proqnoz: {} | Əminlik: {:.1f}% | Cüt: {}",
+            log.info("🔮 Prediction: {} | Confidence: {:.1f}% | Pair: {}",
                     signal, confidence, data.getPair());
 
             return PredictionResult.builder()
@@ -244,22 +244,22 @@ public class WekaModelService {
                     .build();
 
         } catch (Exception e) {
-            log.error("Proqnoz zamanı xəta: {}", e.getMessage());
+            log.error("Error during prediction: {}", e.getMessage());
             return buildErrorResult(data.getPair());
         }
     }
 
     /**
-     * Risk səviyyəsini hesabla
+     * Calculate the risk level.
      */
     private String calculateRiskLevel(ForexData data) {
         double rsi = data.getRsi();
         double atr = data.getAtr();
 
-        // Həddən artıq zona: RSI < 20 və ya > 80
+        // Extreme zone: RSI < 20 or > 80
         if (rsi < 20 || rsi > 80) return "HIGH";
 
-        // ATR yüksəkdirsə volatilite çoxdur
+        // If ATR is high, volatility is high
         if (atr > 0.0040) return "HIGH";
         if (atr > 0.0025) return "MEDIUM";
 
@@ -267,7 +267,7 @@ public class WekaModelService {
     }
 
     /**
-     * Siqnal üçün izahat yaz
+     * Write an explanation for the signal.
      */
     private String buildReason(String signal, ForexData data, double confidence) {
         StringBuilder sb = new StringBuilder();
@@ -275,63 +275,63 @@ public class WekaModelService {
 
         switch (signal) {
             case "BUY" -> {
-                sb.append("RSI aşağı zona (").append(String.format("%.1f", rsi)).append(")");
+                sb.append("RSI in low zone (").append(String.format("%.1f", rsi)).append(")");
                 if (data.getMacd() > data.getMacdSignal())
-                    sb.append(", MACD bullish kəsişmə");
+                    sb.append(", MACD bullish crossover");
                 if (data.getClose() < data.getBbLower())
-                    sb.append(", Qiymət BB alt xəttinin altında");
+                    sb.append(", Price below lower BB line");
             }
             case "SELL" -> {
-                sb.append("RSI yüksək zona (").append(String.format("%.1f", rsi)).append(")");
+                sb.append("RSI in high zone (").append(String.format("%.1f", rsi)).append(")");
                 if (data.getMacd() < data.getMacdSignal())
-                    sb.append(", MACD bearish kəsişmə");
+                    sb.append(", MACD bearish crossover");
                 if (data.getClose() > data.getBbUpper())
-                    sb.append(", Qiymət BB üst xəttinin üstündə");
+                    sb.append(", Price above upper BB line");
             }
             case "HOLD" ->
-                sb.append("Neytral zona, aydın siqnal yoxdur (RSI: ")
+                sb.append("Neutral zone, no clear signal (RSI: ")
                   .append(String.format("%.1f", rsi)).append(")");
         }
 
-        sb.append(String.format(" | Əminlik: %.1f%%", confidence));
+        sb.append(String.format(" | Confidence: %.1f%%", confidence));
         return sb.toString();
     }
 
     /**
-     * Modeli fayla saxla
+     * Save the model to a file.
      */
     private void saveModel(Classifier clf) {
         try {
             new File("models").mkdirs();
             SerializationHelper.write(MODEL_PATH, clf);
-            log.info("💾 Model saxlandı: {}", MODEL_PATH);
+            log.info("💾 Model saved: {}", MODEL_PATH);
         } catch (Exception e) {
-            log.error("Model saxlanarkən xəta: {}", e.getMessage());
+            log.error("Error while saving model: {}", e.getMessage());
         }
     }
 
     /**
-     * Modeli fayldan yüklə
+     * Load the model from a file.
      */
     private void loadModel() {
         try {
             model = (Classifier) SerializationHelper.read(MODEL_PATH);
-            log.info("✅ Model yükləndi: {}", MODEL_PATH);
+            log.info("✅ Model loaded: {}", MODEL_PATH);
         } catch (Exception e) {
-            log.warn("Model yüklənmədi, yenidən öyrədilir...");
+            log.warn("Model could not be loaded, retraining...");
             trainWithSampleData();
         }
     }
 
     /**
-     * Xəta halında standart nəticə
+     * Default result in case of an error.
      */
     private PredictionResult buildErrorResult(String pair) {
         return PredictionResult.builder()
                 .signal("HOLD")
                 .confidence(0.0)
                 .shouldTrade(false)
-                .reason("Model xətası - trade etməyin!")
+                .reason("Model error - do not trade!")
                 .pair(pair)
                 .riskLevel("HIGH")
                 .timestamp(LocalDateTime.now()
