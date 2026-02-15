@@ -1,6 +1,6 @@
 # 🤖 Forex AI Bot — Spring Boot + Weka
 
-A Forex trading signal system built with **Java Spring Boot** and **Weka ML**.
+A Forex trading signal system built using **Java Spring Boot** and **Weka ML**.
 
 ---
 
@@ -10,7 +10,7 @@ A Forex trading signal system built with **Java Spring Boot** and **Weka ML**.
 forex-ai-bot/
 ├── src/
 │   ├── main/java/com/forex/ai/
-│   │   ├── ForexAiApplication.java          ← Entry point
+│   │   ├── ForexAiApplication.java          ← Starting point
 │   │   ├── controller/
 │   │   │   └── ForexController.java          ← REST API endpoints
 │   │   ├── service/
@@ -27,7 +27,7 @@ forex-ai-bot/
 
 ---
 
-## ⚡ Setup & Running
+## ⚡ Setup and Run
 
 ### Requirements
 - Java 17+
@@ -56,12 +56,12 @@ mvn test
 
 | Method | URL | Description |
 |--------|-----|-------------|
-| GET  | `/api/forex/health` | API health check |
-| GET  | `/api/forex/info` | All endpoints info |
+| GET  | `/api/forex/health` | API health |
+| GET  | `/api/forex/info` | All endpoints |
 | POST | `/api/forex/predict` | Predict with your own data |
-| GET  | `/api/forex/predict/simulate/{pair}` | Predict with simulated data |
-| GET  | `/api/forex/test/scenarios/{pair}` | Run 3 scenario tests |
-| GET  | `/api/forex/predict/all` | Predict for all pairs |
+| GET  | `/api/forex/predict/simulate/{pair}` | Predict with simulation |
+| GET  | `/api/forex/test/scenarios/{pair}` | 3 scenario test |
+| GET  | `/api/forex/predict/all` | All pairs |
 | POST | `/api/forex/model/retrain` | Retrain the model |
 
 ---
@@ -104,7 +104,7 @@ curl -X POST http://localhost:8080/api/forex/predict \
 }
 ```
 
-### 2. Simulate & Test
+### 2. Test with Simulation
 
 ```bash
 curl http://localhost:8080/api/forex/predict/simulate/EURUSD
@@ -126,7 +126,7 @@ curl http://localhost:8080/api/forex/predict/all
 
 ## 🧠 AI Model
 
-### Technologies Used
+### Technology Used
 - **Algorithm:** Random Forest (100 trees)
 - **Library:** Weka 3.8.6
 - **Signals:** BUY / SELL / HOLD
@@ -140,8 +140,8 @@ curl http://localhost:8080/api/forex/predict/all
 | MACD Signal | MACD signal line |
 | EMA Fast | 12-period EMA |
 | EMA Slow | 26-period EMA |
-| BB Upper | Bollinger Band upper band |
-| BB Lower | Bollinger Band lower band |
+| BB Upper | Bollinger Band upper line |
+| BB Lower | Bollinger Band lower line |
 | ATR | Average True Range (volatility) |
 | Volume | Trading volume |
 
@@ -153,7 +153,7 @@ RSI > 70  → SELL zone
 RSI 40-60 → HOLD zone
 
 Confidence < 65% → Do not trade
-Risk HIGH        → Do not trade
+Risk HIGH       → Do not trade
 ```
 
 ---
@@ -161,29 +161,29 @@ Risk HIGH        → Do not trade
 ## 🧪 Tests
 
 ```bash
-# Run all tests
+# All tests
 mvn test
 
-# Sample test output:
-# ✅ Oversold Test:  RSI=28.3 → BUY  (78.5%)
+# Test output example:
+# ✅ Oversold Test: RSI=28.3 → BUY (78.5%)
 # ✅ Overbought Test: RSI=76.5 → SELL (82.1%)
-# ✅ Neutral Test:   RSI=51.2 → HOLD (71.3%)
-# ✅ EURUSD: BUY  (68.2%)
+# ✅ Neutral Test: RSI=51.2 → HOLD (71.3%)
+# ✅ EURUSD: BUY (68.2%)
 # ✅ GBPUSD: SELL (74.5%)
 # ✅ USDJPY: HOLD (69.8%)
-# ✅ AUDUSD: BUY  (71.2%)
+# ✅ AUDUSD: BUY (71.2%)
 ```
 
 ---
 
 ## 🔧 Real JForex Integration
 
-For live trading, replace `ForexDataService` with JForex API calls:
+For real trading, replace `ForexDataService` with the JForex API:
 
 ```java
-// Update this method in ForexDataService.java:
+// In ForexDataService.java, change this method:
 public ForexData getMarketData(String pair) {
-    // Fetch real data from JForex API
+    // Get real data from JForex API
     IBar bar = context.getHistory().getBar(
         Instrument.valueOf(pair), Period.ONE_HOUR, OfferSide.ASK, 0
     );
@@ -202,9 +202,9 @@ public ForexData getMarketData(String pair) {
 
 ---
 
-## ⚠️ Disclaimer
+## ⚠️ Warning
 
-> This project is intended for **educational purposes only**. Before trading with real money:
-> - Test thoroughly on a demo account
-> - Apply proper risk management
-> - Seek advice from a financial professional
+> This project is for **educational purposes**. Before trading with real money:
+> - Test on a demo account
+> - Apply risk management
+> - Seek professional advice

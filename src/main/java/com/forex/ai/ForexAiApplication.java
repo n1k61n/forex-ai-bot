@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ForexAiApplication {
     public static void main(String[] args) {
         SpringApplication.run(ForexAiApplication.class, args);
-        System.out.println("✅ Forex AI Bot started!");
+        System.out.println("✅ Forex AI Bot işə düşdü!");
         System.out.println("📊 API: http://localhost:8080");
         System.out.println("📖 Swagger: http://localhost:8080/api/info");
     }

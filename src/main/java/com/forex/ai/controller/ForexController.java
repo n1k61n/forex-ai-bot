@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * Forex AI REST Controller
- * All API endpoints are here
+ * Bütün API endpoint-lər buradadır
  */
 @Slf4j
 @RestController
@@ -27,23 +27,23 @@ public class ForexController {
     private final ForexDataService forexDataService;
 
     /**
-     * ✅ Check API Health
+     * ✅ API Sağlamlığı yoxla
      * GET /api/forex/health
      */
     @GetMapping("/health")
     public ResponseEntity<Map<String, String>> health() {
         Map<String, String> response = new HashMap<>();
-        response.put("status", "✅ Active");
+        response.put("status", "✅ Aktiv");
         response.put("service", "Forex AI Bot");
         response.put("version", "1.0.0");
         return ResponseEntity.ok(response);
     }
 
     /**
-     * 🔮 Get prediction with your own data
+     * 🔮 Öz məlumatınızla proqnoz alın
      * POST /api/forex/predict
      *
-     * Body example:
+     * Body nümunəsi:
      * {
      *   "pair": "EURUSD",
      *   "rsi": 30.5,
@@ -60,22 +60,22 @@ public class ForexController {
      */
     @PostMapping("/predict")
     public ResponseEntity<PredictionResult> predict(@RequestBody ForexData forexData) {
-        log.info("🔮 Prediction request: {}", forexData.getPair());
+        log.info("🔮 Proqnoz sorğusu: {}", forexData.getPair());
         PredictionResult result = wekaModelService.predict(forexData);
         return ResponseEntity.ok(result);
     }
 
     /**
-     * 🎲 Prediction with simulated data
+     * 🎲 Simulyasiya məlumatı ilə proqnoz
      * GET /api/forex/predict/simulate/{pair}
      *
-     * Example: GET /api/forex/predict/simulate/EURUSD
+     * Nümunə: GET /api/forex/predict/simulate/EURUSD
      */
     @GetMapping("/predict/simulate/{pair}")
     public ResponseEntity<Map<String, Object>> predictSimulated(
             @PathVariable String pair) {
 
-        log.info("🎲 Simulation request: {}", pair);
+        log.info("🎲 Simulyasiya sorğusu: {}", pair);
 
         ForexData data = forexDataService.generateSimulatedData(pair);
         PredictionResult result = wekaModelService.predict(data);
@@ -88,57 +88,57 @@ public class ForexController {
     }
 
     /**
-     * 📊 Scenario tests
+     * 📊 Ssenari testləri
      * GET /api/forex/test/scenarios/{pair}
      *
-     * Tests 3 different scenarios: BUY, SELL, HOLD
+     * 3 fərqli ssenari test edir: BUY, SELL, HOLD
      */
     @GetMapping("/test/scenarios/{pair}")
     public ResponseEntity<Map<String, Object>> testScenarios(
             @PathVariable String pair) {
 
-        log.info("📊 Scenario tests: {}", pair);
+        log.info("📊 Ssenari testləri: {}", pair);
 
-        // Oversold → BUY expected
+        // Oversold → BUY gözlənilir
         ForexData oversold = forexDataService.generateOversoldData(pair);
         PredictionResult buyResult = wekaModelService.predict(oversold);
 
-        // Overbought → SELL expected
+        // Overbought → SELL gözlənilir
         ForexData overbought = forexDataService.generateOverboughtData(pair);
         PredictionResult sellResult = wekaModelService.predict(overbought);
 
-        // Neutral → HOLD expected
+        // Neytral → HOLD gözlənilir
         ForexData neutral = forexDataService.generateNeutralData(pair);
         PredictionResult holdResult = wekaModelService.predict(neutral);
 
         Map<String, Object> scenarios = new HashMap<>();
 
-        // BUY scenario
+        // BUY ssenarisi
         Map<String, Object> buyScenario = new HashMap<>();
-        buyScenario.put("scenario", "Oversold (RSI: 28.3) → BUY expected");
+        buyScenario.put("ssenari", "Oversold (RSI: 28.3) → BUY gözlənilir");
         buyScenario.put("input", oversold);
-        buyScenario.put("result", buyResult);
-        scenarios.put("buy_scenario", buyScenario);
+        buyScenario.put("netice", buyResult);
+        scenarios.put("buy_ssenarisi", buyScenario);
 
-        // SELL scenario
+        // SELL ssenarisi
         Map<String, Object> sellScenario = new HashMap<>();
-        sellScenario.put("scenario", "Overbought (RSI: 76.5) → SELL expected");
+        sellScenario.put("ssenari", "Overbought (RSI: 76.5) → SELL gözlənilir");
         sellScenario.put("input", overbought);
-        sellScenario.put("result", sellResult);
-        scenarios.put("sell_scenario", sellScenario);
+        sellScenario.put("netice", sellResult);
+        scenarios.put("sell_ssenarisi", sellScenario);
 
-        // HOLD scenario
+        // HOLD ssenarisi
         Map<String, Object> holdScenario = new HashMap<>();
-        holdScenario.put("scenario", "Neutral (RSI: 51.2) → HOLD expected");
+        holdScenario.put("ssenari", "Neytral (RSI: 51.2) → HOLD gözlənilir");
         holdScenario.put("input", neutral);
-        holdScenario.put("result", holdResult);
-        scenarios.put("hold_scenario", holdScenario);
+        holdScenario.put("netice", holdResult);
+        scenarios.put("hold_ssenarisi", holdScenario);
 
         return ResponseEntity.ok(scenarios);
     }
 
     /**
-     * 📈 Predict for multiple currency pairs at once
+     * 📈 Birdən çox valyuta cütü üçün eyni anda proqnoz
      * GET /api/forex/predict/all
      */
     @GetMapping("/predict/all")
@@ -164,40 +164,40 @@ public class ForexController {
     }
 
     /**
-     * 🔄 Retrain the model
+     * 🔄 Modeli yenidən öyrət
      * POST /api/forex/model/retrain
      */
     @PostMapping("/model/retrain")
     public ResponseEntity<Map<String, String>> retrainModel() {
-        log.info("🔄 Retraining model...");
+        log.info("🔄 Model yenidən öyrədilir...");
         wekaModelService.trainWithSampleData();
 
         Map<String, String> response = new HashMap<>();
-        response.put("status", "✅ Model retrained");
+        response.put("status", "✅ Model yenidən öyrədildi");
         response.put("timestamp", java.time.LocalDateTime.now().toString());
         return ResponseEntity.ok(response);
     }
 
     /**
-     * ℹ️ API info
+     * ℹ️ API məlumatı
      * GET /api/info
      */
     @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> info() {
         Map<String, Object> info = new HashMap<>();
-        info.put("name", "Forex AI Bot");
-        info.put("version", "1.0.0");
-        info.put("technology", "Spring Boot + Weka ML");
-        info.put("supported_pairs", List.of("EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF"));
+        info.put("ad", "Forex AI Bot");
+        info.put("versiya", "1.0.0");
+        info.put("texnologiya", "Spring Boot + Weka ML");
+        info.put("desteklenen_cutler", List.of("EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCHF"));
 
         Map<String, String> endpoints = new HashMap<>();
-        endpoints.put("GET  /api/forex/health", "API health");
-        endpoints.put("POST /api/forex/predict", "Predict with your own data");
-        endpoints.put("GET  /api/forex/predict/simulate/{pair}", "Predict with simulation");
-        endpoints.put("GET  /api/forex/test/scenarios/{pair}", "3 scenario test");
-        endpoints.put("GET  /api/forex/predict/all", "Predict for all pairs");
-        endpoints.put("POST /api/forex/model/retrain", "Retrain the model");
-        info.put("endpoints", endpoints);
+        endpoints.put("GET  /api/forex/health", "API sağlamlığı");
+        endpoints.put("POST /api/forex/predict", "Öz datanla proqnoz");
+        endpoints.put("GET  /api/forex/predict/simulate/{pair}", "Simulyasiya ilə proqnoz");
+        endpoints.put("GET  /api/forex/test/scenarios/{pair}", "3 ssenari testi");
+        endpoints.put("GET  /api/forex/predict/all", "Bütün cütlər üçün proqnoz");
+        endpoints.put("POST /api/forex/model/retrain", "Modeli yenidən öyrət");
+        info.put("endpointler", endpoints);
 
         return ResponseEntity.ok(info);
     }

@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Forex Data Model
- * All indicators needed for trading
+ * Forex Məlumat Modeli
+ * Trading üçün lazım olan bütün indikatolar
  */
 @Data
 @Builder
@@ -15,26 +15,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ForexData {
 
-    // Basic OHLCV data
+    // Əsas OHLCV məlumatları
     private double open;
     private double high;
     private double low;
     private double close;
     private double volume;
 
-    // Technical Indicators
+    // Texniki İndikatorlar
     private double rsi;          // Relative Strength Index (0-100)
-    private double macd;         // MACD line
-    private double macdSignal;   // MACD signal line
-    private double emaFast;      // EMA 12 (fast)
-    private double emaSlow;      // EMA 26 (slow)
-    private double bbUpper;      // Bollinger Band upper
-    private double bbLower;      // Bollinger Band lower
+    private double macd;         // MACD xətti
+    private double macdSignal;   // MACD siqnal xətti
+    private double emaFast;      // EMA 12 (sürətli)
+    private double emaSlow;      // EMA 26 (yavaş)
+    private double bbUpper;      // Bollinger Band yuxarı
+    private double bbLower;      // Bollinger Band aşağı
     private double atr;          // Average True Range
 
-    // Currency pair
-    private String pair;         // E.g., EURUSD, GBPUSD
+    // Valyuta cütü
+    private String pair;         // Məs: EURUSD, GBPUSD
 
-    // Time
+    // Zaman
     private String timestamp;
 }

@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Forex AI Bot - Unit Tests
+ * Forex AI Bot - Unit Testlər
  */
 @SpringBootTest
 class ForexAiApplicationTests {
@@ -25,19 +25,19 @@ class ForexAiApplicationTests {
     private ForexDataService forexDataService;
 
     // =========================================
-    // MODEL ASSURANCES
+    // MODEL TƏMİNATLARI
     // =========================================
 
     @Test
-    @DisplayName("Model should be loaded")
+    @DisplayName("Model yüklənməlidir")
     void modelShouldBeLoaded() {
         ForexData data = forexDataService.generateSimulatedData("EURUSD");
         PredictionResult result = wekaModelService.predict(data);
-        assertNotNull(result, "Result should not be null");
+        assertNotNull(result, "Nəticə null olmamalıdır");
     }
 
     @Test
-    @DisplayName("Prediction signal should be one of BUY, SELL, HOLD")
+    @DisplayName("Proqnoz siqnalı BUY, SELL, HOLD-dan biri olmalıdır")
     void signalShouldBeValid() {
         ForexData data = forexDataService.generateSimulatedData("EURUSD");
         PredictionResult result = wekaModelService.predict(data);
@@ -46,12 +46,12 @@ class ForexAiApplicationTests {
             result.getSignal().equals("BUY") ||
             result.getSignal().equals("SELL") ||
             result.getSignal().equals("HOLD"),
-            "Signal should be BUY, SELL, or HOLD"
+            "Siqnal BUY, SELL və ya HOLD olmalıdır"
         );
     }
 
     @Test
-    @DisplayName("Probabilities should sum to 100%")
+    @DisplayName("Ehtimallar cəmi 100% olmalıdır")
     void probabilitiesShouldSumTo100() {
         ForexData data = forexDataService.generateSimulatedData("EURUSD");
         PredictionResult result = wekaModelService.predict(data);
@@ -60,77 +60,77 @@ class ForexAiApplicationTests {
                    + result.getSellProbability()
                    + result.getHoldProbability();
 
-        assertEquals(100.0, sum, 1.0, "Sum of probabilities should be ~100%");
+        assertEquals(100.0, sum, 1.0, "Ehtimalların cəmi ~100% olmalıdır");
     }
 
     @Test
-    @DisplayName("Confidence should be between 0 and 100")
+    @DisplayName("Əminlik 0-100 arasında olmalıdır")
     void confidenceShouldBeInRange() {
         ForexData data = forexDataService.generateSimulatedData("EURUSD");
         PredictionResult result = wekaModelService.predict(data);
 
         assertTrue(result.getConfidence() >= 0 && result.getConfidence() <= 100,
-            "Confidence should be between 0 and 100");
+            "Əminlik 0-100 arasında olmalıdır");
     }
 
     // =========================================
-    // SCENARIO ASSURANCES
+    // SSENARİ TƏMİNATLARI
     // =========================================
 
     @Test
-    @DisplayName("Oversold data → BUY signal expected")
+    @DisplayName("Oversold data → BUY siqnalı gözlənilir")
     void oversoldShouldGenerateBuySignal() {
-        // RSI = 28.3 → very low → BUY
+        // RSI = 28.3 → çox aşağı → BUY
         ForexData data = forexDataService.generateOversoldData("EURUSD");
         PredictionResult result = wekaModelService.predict(data);
 
-        System.out.println("✅ Oversold Test:");
+        System.out.println("✅ Oversold Testi:");
         System.out.println("   RSI: " + data.getRsi());
-        System.out.println("   Signal: " + result.getSignal());
-        System.out.println("   Confidence: " + result.getConfidence() + "%");
+        System.out.println("   Siqnal: " + result.getSignal());
+        System.out.println("   Əminlik: " + result.getConfidence() + "%");
 
         assertEquals("BUY", result.getSignal(),
-            "BUY signal is expected when RSI is 28.3");
+            "RSI 28.3 olduqda BUY siqnalı gözlənilir");
     }
 
     @Test
-    @DisplayName("Overbought data → SELL signal expected")
+    @DisplayName("Overbought data → SELL siqnalı gözlənilir")
     void overboughtShouldGenerateSellSignal() {
-        // RSI = 76.5 → very high → SELL
+        // RSI = 76.5 → çox yüksək → SELL
         ForexData data = forexDataService.generateOverboughtData("EURUSD");
         PredictionResult result = wekaModelService.predict(data);
 
-        System.out.println("✅ Overbought Test:");
+        System.out.println("✅ Overbought Testi:");
         System.out.println("   RSI: " + data.getRsi());
-        System.out.println("   Signal: " + result.getSignal());
-        System.out.println("   Confidence: " + result.getConfidence() + "%");
+        System.out.println("   Siqnal: " + result.getSignal());
+        System.out.println("   Əminlik: " + result.getConfidence() + "%");
 
         assertEquals("SELL", result.getSignal(),
-            "SELL signal is expected when RSI is 76.5");
+            "RSI 76.5 olduqda SELL siqnalı gözlənilir");
     }
 
     @Test
-    @DisplayName("Neutral data → HOLD signal expected")
+    @DisplayName("Neytral data → HOLD siqnalı gözlənilir")
     void neutralShouldGenerateHoldSignal() {
-        // RSI = 51.2 → neutral → HOLD
+        // RSI = 51.2 → neytral → HOLD
         ForexData data = forexDataService.generateNeutralData("EURUSD");
         PredictionResult result = wekaModelService.predict(data);
 
-        System.out.println("✅ Neutral Test:");
+        System.out.println("✅ Neytral Testi:");
         System.out.println("   RSI: " + data.getRsi());
-        System.out.println("   Signal: " + result.getSignal());
-        System.out.println("   Confidence: " + result.getConfidence() + "%");
+        System.out.println("   Siqnal: " + result.getSignal());
+        System.out.println("   Əminlik: " + result.getConfidence() + "%");
 
         assertEquals("HOLD", result.getSignal(),
-            "HOLD signal is expected when RSI is 51.2");
+            "RSI 51.2 olduqda HOLD siqnalı gözlənilir");
     }
 
     // =========================================
-    // RISK ASSURANCES
+    // RİSK TƏMİNATLARI
     // =========================================
 
     @Test
-    @DisplayName("Risk should be HIGH on high ATR")
+    @DisplayName("Yüksək ATR-də risk HIGH olmalıdır")
     void highAtrShouldBeHighRisk() {
         ForexData data = ForexData.builder()
             .pair("EURUSD")
@@ -141,24 +141,24 @@ class ForexAiApplicationTests {
             .emaSlow(1.0849)
             .bbUpper(1.0920)
             .bbLower(1.0780)
-            .atr(0.0050)  // Very high ATR → HIGH risk
+            .atr(0.0050)  // Çox yüksək ATR → HIGH risk
             .close(1.0850)
             .volume(10000)
             .build();
 
         PredictionResult result = wekaModelService.predict(data);
         assertEquals("HIGH", result.getRiskLevel(),
-            "Risk should be HIGH on high ATR");
+            "Yüksək ATR-də risk HIGH olmalıdır");
         assertFalse(result.isShouldTrade(),
-            "Should not trade with high risk");
+            "Yüksək risklə trade etməməlidir");
     }
 
     // =========================================
-    // MULTIPLE PAIR ASSURANCES
+    // ÇOXLU CÜT TƏMİNATLARI
     // =========================================
 
     @Test
-    @DisplayName("Prediction should work for different currency pairs")
+    @DisplayName("Müxtəlif valyuta cütləri üçün proqnoz işləməlidir")
     void shouldWorkForMultiplePairs() {
         String[] pairs = {"EURUSD", "GBPUSD", "USDJPY", "AUDUSD"};
 
@@ -166,8 +166,8 @@ class ForexAiApplicationTests {
             ForexData data = forexDataService.generateSimulatedData(pair);
             PredictionResult result = wekaModelService.predict(data);
 
-            assertNotNull(result, "Result for " + pair + " should not be null");
-            assertNotNull(result.getSignal(), "Signal for " + pair + " should not be null");
+            assertNotNull(result, pair + " üçün nəticə null olmamalıdır");
+            assertNotNull(result.getSignal(), pair + " üçün siqnal null olmamalıdır");
 
             System.out.println("✅ " + pair + ": " + result.getSignal()
                 + " (" + result.getConfidence() + "%)");
