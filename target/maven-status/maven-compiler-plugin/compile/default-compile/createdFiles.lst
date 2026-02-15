@@ -1,0 +1,8 @@
+com\forex\ai\model\ForexData.class
+com\forex\ai\model\PredictionResult.class
+com\forex\ai\service\WekaModelService.class
+com\forex\ai\service\ForexDataService.class
+com\forex\ai\controller\ForexController.class
+com\forex\ai\ForexAiApplication.class
+com\forex\ai\model\ForexData$ForexDataBuilder.class
+com\forex\ai\model\PredictionResult$PredictionResultBuilder.class
