@@ -1,0 +1,15 @@
+# .gitignore faylını yarat
+New-Item .gitignore -ItemType File
+notepad .gitignore
+```
+
+İçinə bunları yaz:
+```
+target/
+*.class
+*.jar
+.idea/
+*.iml
+models/
+*.model
+.env
